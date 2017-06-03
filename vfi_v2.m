@@ -25,7 +25,7 @@ EVdef    = 0; % the E(V) when in default, so prob(reenter) will appear here too
 valuebz  = zeros(numb,1); % value of choice of bp, for each (b,p).
 P        = zeros(numb,numz); % prob of default.
 
-while err > toler && index < 3
+while err > toler && index < 10
     valueold = value;
     vbadold  = vbad;
     
