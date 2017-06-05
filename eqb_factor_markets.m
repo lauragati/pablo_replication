@@ -1,7 +1,6 @@
 function [s1, s2, s3, s4, s5, s6, s7, s8] = eqb_factor_markets(z)
 % This file sets up and solves the factor market equilibrium for the non-default case.
 load params
-k;
 syms M mstar md  lm lf l pm w
 
 k = 1e+2; % 1e+14; you can make k arbitrarily large so even z close to 0 solves, but z < 0 doesn't :(
@@ -49,12 +48,3 @@ s5 = sol_numeric(5); % md
 s6 = sol_numeric(6); % mstar
 s7 = sol_numeric(7); % pm
 s8 = sol_numeric(8); % w
-
-% f(1) = alpha_m*z*k^alpha_k * s1^(alpha_m - mu)*s3^alpha_l*(1-lam)*s6^(mu-1) - pstar;
-% f(2) = -s1 + (lam*s5^mu + (1-lam)*s6^mu)^(1/mu);
-% f(3) = alpha_m * z * k^alpha_k * s1^(alpha_m - mu) * s3^alpha_l * lam * s5^(mu-1) - s7;
-% f(4) = alpha_l * z * k^alpha_k * s1^alpha_m * s3^(alpha_l -1) -s8;
-% f(5) = gam * s7 * a * s4^(gam-1) - s8;
-% f(6) = s2^(omega-1) - s8;
-% f(7) = s3 + s4 -s2;
-% f(8) = a * s4^gam -s5;
