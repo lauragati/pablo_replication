@@ -3,7 +3,7 @@ clear all
 % Parameters and Tauchen discretization
 load params % parameters are defined in set_params --> don't change any values anywhere else!
 
-[Z,F,B] = tauchen_MY(cover,sige, rho_e, 0, numz, lbb, ubb, numb);
+[Z,F,B] = tauchen_MY(cover,sige, rho_e, 7, numz, lbb, ubb, numb); 
 
 %% Big VFI loop
 index    = 0;
@@ -25,7 +25,8 @@ EVdef    = 0; % the E(V) when in default, so prob(reenter) will appear here too
 valuebz  = zeros(numb,1); % value of choice of bp, for each (b,p).
 P        = zeros(numb,numz); % prob of default.
 
-while err > toler && index < 10
+tic
+while err > toler && index < 3
     valueold = value;
     vbadold  = vbad;
     
@@ -33,27 +34,27 @@ while err > toler && index < 10
         for z = 1:numz % state 2
             % (1.): Equilibrium in factor markets (need to do once for
             % default too)
-            %[M, l, lf, lm, md, mstar, pm, w] = eqb_factor_markets(Z(z)); %
-            %not yet working
-            % Test:
-            M  = 2;
-            l  = 2;
-            lf = 1;
-            lm = 1;
-            md = 3;
-            mstar = 2;
-            pm = 3;
-            w  = 2;
-            fm = M^alpha_m * lf^alpha_l *k^alpha_k;
+            [M, l, lf, lm, md, mstar, pm, w] = eqb_factor_markets(Z(z)); %
+%             % Test:
+%             M  = 2;
+%             l  = 2;
+%             lf = 1;
+%             lm = 1;
+%             md = 3;
+%             mstar = 2;
+%             pm = 3;
+%             w  = 2;
+%             fm = M^alpha_m * lf^alpha_l *k^alpha_k;
             % Factor eqb test for default:
-            M_def  = 2;
-            l_def  = 2;
-            lf_def = 1;
-            lm_def = 1;
-            md_def = 3;
-            mstar_def = 2;
-            pm_def = 3;
-            w_def  = 2;
+            [M_def, l_def, lf_def, lm_def, md_def, mstar_def, pm_def, w_def] = eqb_factor_markets(Z(z));
+%             M_def  = 2;
+%             l_def  = 2;
+%             lf_def = 1;
+%             lm_def = 1;
+%             md_def = 3;
+%             mstar_def = 2;
+%             pm_def = 3;
+%             w_def  = 2;
             fm_def = M_def^alpha_m * lf_def^alpha_l *k^alpha_k;
             
             % (2.): value of default (independent of choice of bp b/c bp=0 then)
@@ -121,3 +122,4 @@ while err > toler && index < 10
     q     = 0.5*q_upd + 0.5*q;
     index = index +1;
 end
+toc

@@ -32,9 +32,9 @@ range3 = [-Inf, 200; -Inf 100; -Inf 100; -Inf 1; -Inf 1; -Inf 800; -Inf 30; -Inf
       %   M             l           lf   lm     md      mstar     pm       w
 range4 = [50, 75;    26 34;     26 34;   0.2 0.3;     0.05 0.2;    250 310;    13 15;    4 5];
       %   M             l           lf     lm             md         mstar       pm       w      
-tic
+% tic
 S = vpasolve(f, vars, range4); % with vpasolve, it takes 26.980880 seconds. The range command speeds that up to 0.231044 seconds.
-toc
+% toc
 
 % try: lsqnonlin,  fmincon, ga. See Ryan's code try_search.m in LOOP. 
 
