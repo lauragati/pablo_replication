@@ -1,11 +1,12 @@
 function [s1, s2, s3, s4, s5, s6, s7, s8] = eqb_factor_markets(z)
-% This file sets up the fsolve problem that forms a part of the VFI.
+% This file sets up and solves the factor market equilibrium for the non-default case.
 load params
+k;
 syms M mstar md  lm lf l pm w
 
-k = 1e+14; % you can make k arbitrarily large so even z close to 0 solves, but z < 0 doesn't :(
-z = 0.1633; %test values (given by VFI)
-% Z =
+k = 1e+2; % 1e+14; you can make k arbitrarily large so even z close to 0 solves, but z < 0 doesn't :(
+%z = 7.1633; %test values (given by VFI)
+% Z =                
 % 
 %    -0.1633
 %    -0.0817
@@ -30,10 +31,10 @@ range2 = [-200, 200; -100 100; -100 100; -1 1; -1 1; -800 800; -30 30; -10 10];
       %   M             l           lf   lm     md      mstar     pm       w
 range3 = [-Inf, 200; -Inf 100; -Inf 100; -Inf 1; -Inf 1; -Inf 800; -Inf 30; -Inf 10];
       %   M             l           lf   lm     md      mstar     pm       w
-% z=0.99 4.7185    5.1027    4.9238    0.1789    0.0929   19.3747    5.7722    2.0992
-% k=1e+14 147.2067   53.9957   53.7583    0.2373    0.1133  646.3724   18.3812    6.1408
+range4 = [50, 75;    26 34;     26 34;   0.2 0.3;     0.05 0.2;    250 310;    13 15;    4 5];
+      %   M             l           lf     lm             md         mstar       pm       w      
 tic
-S = vpasolve(f, vars); % with vpasolve, it takes 26.980880 seconds. The range command speeds that up to 0.231044 seconds.
+S = vpasolve(f, vars, range4); % with vpasolve, it takes 26.980880 seconds. The range command speeds that up to 0.231044 seconds.
 toc
 
 % try: lsqnonlin,  fmincon, ga. See Ryan's code try_search.m in LOOP. 
