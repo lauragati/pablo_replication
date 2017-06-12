@@ -29,12 +29,4 @@ for j = 1:numz
 end
 
 % Discretization for bonds (b)
-%lbb = -10; % lower bound for bonds (max borrowing)
-%ubb = 10; %upperbound for bonds (max lending) - need to check its own value in steady state to get an idea
-% These two are not given by MY, so I set some symmetric bounds and will
-% change values. Start with [-10,10]
-distb = ubb - lbb; %overall distance to be covered
-stepsize_b = distb/(numb-1); %size of each bin
-for i = 1:numb
-    B(i) = lbb + (i-1)*stepsize_b; %linearly spaced points in bonds space
-end
+B=linspace(lbb,ubb,numb)';
