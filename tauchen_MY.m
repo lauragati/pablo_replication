@@ -1,8 +1,8 @@
 function [Z,F,B] = tauchen_MY(cover,sige, rho_e, mu, numz, lbb, ubb, numb)
 
-% Tauchen discretization of TFP for Mendoza and Yue
+% Tauchen discretization of TFP for Mendoza & Yue
 %Preallocating matrices to speed up the code
-Z = zeros(numz,1); %discrete spanning space of TFP (I'm calling TFP z)
+Z = zeros(numz,1); %discrete spanning space of TFP (I'm calling TFP in level z, log TFP e)
 F = zeros(numz,numz); %Markov chain transition probability matrix
 
 lbz = mu - cover*sige/sqrt((1-rho_e^2)); %lower bound of the z grid
