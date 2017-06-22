@@ -100,6 +100,48 @@ void tauchen(double rrho, double ssigma, vector<double>& Z, vector<double>& P) {
 }; // Tauchen ends.
 
 // ------
+// C.) DEFINE FUNCTORS AS INPUTS TO SOLVER FOR FACTOR MARKET EQUILIBRIUM
+// C.1) Generic functor
+template<typename _Scalar, int NX = Eigen::Dynamic, int NY = Eigen::Dynamic>
+struct Functor
+{
+    typedef _Scalar Scalar;
+    enum {
+        InputsAtCompileTime = NX,
+        ValuesAtCompileTime = NY
+    };
+    typedef Eigen::Matrix<Scalar,InputsAtCompileTime,1> InputType;
+    typedef Eigen::Matrix<Scalar,ValuesAtCompileTime,1> ValueType;
+    typedef Eigen::Matrix<Scalar,ValuesAtCompileTime,InputsAtCompileTime> JacobianType;
+    
+    int m_inputs, m_values;
+    
+    Functor() : m_inputs(InputsAtCompileTime), m_values(ValuesAtCompileTime) {}
+    Functor(int inputs, int values) : m_inputs(inputs), m_values(values) {}
+    
+    int inputs() const { return m_inputs; }
+    int values() const { return m_values; }
+    
+}; // closes struct Functor
+
+// C.2) Functor for good scenario factor market solver
+struct my_functor_good : Functor<double>
+{
+    my_functor_good(void): Functor<double>(3,3) {}
+    int operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const
+    {
+        // Equations 14, 15 and the one describing ms come here
+        fvec(0) = 10.0*pow(x(0)+3.0,2) +  pow(x(1)-5.0,2);
+        fvec(1) = 0;
+        fvec(2) = 0;
+        
+        return 0;
+    } // closes operator
+}; // closes struct my_functor_good
+
+// C.2) Functor for bad (default) scenario factor market solver
+
+
 
 
 // --------------------- MAIN CODE ---------------------------------
@@ -135,6 +177,25 @@ int main(int argc, const char * argv[]) {
     }
     
     // (3.) FACTOR MARKET EQUILIBRIUM
+    // (3.1) Good (non-default) factor market
+    Eigen::VectorXd x(3);
+    x(0) = 0.07;
+    x(1) = 0.05;
+    x(2) = 0.005;
+    std::cout << "x: " << x << std::endl;
+    
+    my_functor_good functor;
+    Eigen::NumericalDiff<my_functor_good> numDiff(functor);
+    Eigen::LevenbergMarquardt<Eigen::NumericalDiff<my_functor_good>,double> lm(numDiff);
+    lm.parameters.maxfev = 2000;
+    lm.parameters.xtol = 1.0e-10;
+    std::cout << lm.parameters.maxfev << std::endl;
+    
+    int ret = lm.minimize(x);
+    std::cout << lm.iter << std::endl;
+    std::cout << ret << std::endl;
+    
+    std::cout << "x that minimizes the function: " << x << std::endl;
     
     // (4.) VFI
     
