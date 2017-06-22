@@ -203,9 +203,7 @@ int main(int argc, const char * argv[]) {
     // recreate HP-filter using Eigen library here.
     
     /* Next up:
-     [Z,P,b] = tauchen_MY(cover,sigma_z, rho_z, mu_z, numz, lbb, ubb, numb);
-     e=exp(Z'); % shock process
-     E = size(e,2); % =numz (rename for simplicity)
+     
      */
     
 }
