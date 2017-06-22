@@ -11,18 +11,19 @@
 #include <algorithm>
 #include <functional>
 #include <tuple>
-
-
-
-/* Includes, system */
 #include <iomanip>
 #include <fstream>
-#include <cmath> // apparently needed for sqrt, fab, exp. Pablo didn't need it.
+#include <cmath> 
+#include <Eigen/Dense>
+#include <unsupported/Eigen/NonLinearOptimization>
+#include <unsupported/Eigen/NumericalDiff>
 
-
+using namespace Eigen;
 using namespace std;
 
-// A.) DEFINE SOME PARAMETERS (those which are needed as double in code body are commented out here, but kept here for readability)
+// A.) DEFINE SOME PARAMETERS
+// (those which are needed as double in code body are commented out here, but kept here for readability)
+// ------
 //#define alpha_m 0.43 // share of intermediate goods in gross output
 //#define gam 0.7 // labor income share in value added and in intermediate goods production
 //#define alpha_L 0.3990
@@ -48,7 +49,9 @@ using namespace std;
 #define ubb 0.05 // upper bound for bond space
 //#define smooth 1600 // smoothing parameter for HP filter
 
+// ------
 // B.) DEFINE TAUCHEN'S DISCRETIZATION METHOD
+// ------
 // Define a Normal CDF in preamble
 // A stand alone normcdf
 double mynormcdf(double x) {
@@ -96,6 +99,8 @@ void tauchen(double rrho, double ssigma, vector<double>& Z, vector<double>& P) {
     
 }; // Tauchen ends.
 
+// ------
+
 
 // --------------------- MAIN CODE ---------------------------------
 int main(int argc, const char * argv[]) {
@@ -121,8 +126,13 @@ int main(int argc, const char * argv[]) {
     vector<double> B(numb); // bond grid
     vector<double> Z(numz); // endowment grid
     vector<double> P(numz*numz, 0.0); // prob of default, comes from tauchen.
-
+    
     tauchen(rho_z, sigma_z, Z, P);
+    
+    vector<double> e(numz, 0.0); // = exp(z), shock process in levels
+    for (int i=0; i<=numz; i++){
+        e[i] = exp(Z[i]);
+    }
     
     // (3.) FACTOR MARKET EQUILIBRIUM
     
