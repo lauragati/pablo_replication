@@ -49,6 +49,52 @@ using namespace std;
 //#define smooth 1600 // smoothing parameter for HP filter
 
 // B.) DEFINE TAUCHEN'S DISCRETIZATION METHOD
+// Define a Normal CDF in preamble
+// A stand alone normcdf
+double mynormcdf(double x) {
+    // constants
+    double a1 =  0.254829592;
+    double a2 = -0.284496736;
+    double a3 =  1.421413741;
+    double a4 = -1.453152027;
+    double a5 =  1.061405429;
+    double p  =  0.3275911;
+    
+    // Save the sign of x
+    int sign = 1;
+    if (x < 0)
+        sign = -1;
+    x = fabs(x)/sqrt(2.0);
+    
+    // A&S formula 7.1.26
+    double t = 1.0/(1.0 + p*x);
+    double y = 1.0 - (((((a5*t + a4)*t) + a3)*t + a2)*t + a1)*t*exp(-x*x);
+    
+    return 0.5*(1.0 + sign*y);
+};
+
+// Tauchen's method itself
+void tauchen(double rrho, double ssigma, vector<double>& Z, vector<double>& P) {
+    double ssigma_z = sqrt(pow(ssigma,2)/(1-pow(rrho,2)) );
+    int nzgrid = Z.size();
+    Z[nzgrid-1] = 5*ssigma_z; Z[0] = -5*ssigma_z;
+    double step = (Z[nzgrid-1] - Z[0])/ double(nzgrid-1);
+    for (int i = 2; i <= nzgrid-1; i++) {
+        Z[i-1] = Z[i-2] + step;
+    };
+    
+    for (int i_z = 0; i_z < nzgrid; ++i_z) {
+        P[i_z] = mynormcdf( (Z[0]-rrho*Z[i_z]+step/2)/ssigma  );
+        P[i_z+nzgrid*(nzgrid-1)] = 1.0 - mynormcdf( (Z[nzgrid-1]-rrho*Z[i_z]-step/2)/ssigma  );
+    };
+    
+    for (int i_z = 0; i_z < nzgrid; ++i_z) {
+        for (int i_zplus = 1; i_zplus < nzgrid-1; ++i_zplus) {
+            P[i_z+nzgrid*i_zplus] = mynormcdf( (Z[i_zplus]-rrho*Z[i_z]+step/2)/ssigma  )-mynormcdf( (Z[i_zplus]-rrho*Z[i_z]-step/2)/ssigma  );
+        };
+    };
+    
+}; // Tauchen ends.
 
 
 // --------------------- MAIN CODE ---------------------------------
@@ -70,7 +116,13 @@ int main(int argc, const char * argv[]) {
     double bet = 0.88; // subjective discount factor
     double thet = 0.7; // upper bound of imported inputs with working capital
     double xi = 0; //-0.67; % TFP semi-elasticity of exogenous capital flows
+    
     // (2) TAUCHEN DISCRETIZATION
+    vector<double> B(numb); // bond grid
+    vector<double> Z(numz); // endowment grid
+    vector<double> P(numz*numz, 0.0); // prob of default, comes from tauchen.
+
+    tauchen(rho_z, sigma_z, Z, P);
     
     // (3.) FACTOR MARKET EQUILIBRIUM
     
