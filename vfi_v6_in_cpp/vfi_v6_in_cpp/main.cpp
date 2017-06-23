@@ -101,6 +101,7 @@ void tauchen(double rrho, double ssigma, vector<double>& Z, vector<double>& P) {
 
 // ------
 // C.) DEFINE FUNCTORS AS INPUTS TO SOLVER FOR FACTOR MARKET EQUILIBRIUM
+// ------
 // C.1) Generic functor
 template<typename _Scalar, int NX = Eigen::Dynamic, int NY = Eigen::Dynamic>
 struct Functor
@@ -113,6 +114,9 @@ struct Functor
     typedef Eigen::Matrix<Scalar,InputsAtCompileTime,1> InputType;
     typedef Eigen::Matrix<Scalar,ValuesAtCompileTime,1> ValueType;
     typedef Eigen::Matrix<Scalar,ValuesAtCompileTime,InputsAtCompileTime> JacobianType;
+//    // try own typedef:
+//    typedef Eigen::Matrix<Scalar,InputsAtCompileTime,1> EjType;
+    
     
     int m_inputs, m_values;
     
@@ -144,7 +148,9 @@ struct my_functor_good : Functor<double>
 
 
 
-// --------------------- MAIN CODE ---------------------------------
+
+
+// --------------------- MAIN BODY ---------------------------------
 int main(int argc, const char * argv[]) {
 
     // (1.) DEFINE PARAMETERS NEEDED AS DOUBLE IN BODY OF CODE
@@ -196,6 +202,7 @@ int main(int argc, const char * argv[]) {
     std::cout << ret << std::endl;
     
     std::cout << "x that minimizes the function: " << x << std::endl;
+    
     
     // (4.) VFI
     
